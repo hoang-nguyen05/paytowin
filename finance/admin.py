@@ -16,7 +16,7 @@ class CategoryAdmin(admin.ModelAdmin):
     list_filter = ("is_income",)
     search_fields = ("name", "user__username")
 
-#
+
 @admin.register(Transaction)
 class TransactionAdmin(admin.ModelAdmin):
     list_display = ("id", "user", "date", "type", "category", "account", "amount")
@@ -35,7 +35,7 @@ class BudgetAdmin(admin.ModelAdmin):
     list_display = ("id", "user", "category", "month", "limit_amount", "created_at")
     list_filter = ("month",)
 
-
+cccc
 @admin.register(BudgetAdjustmentRequest)
 class BudgetAdjustmentRequestAdmin(admin.ModelAdmin):
     list_display = ("id", "user", "budget", "new_limit_amount", "status", "created_at")
