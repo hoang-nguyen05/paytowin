@@ -41,5 +41,5 @@ def dashboard(request):
 from django.shortcuts import render
 
 # Create your views here.
-def dashbooasrd(request):
+def dashd(request):
     return render(request, "accounts/dashboard.html")
