@@ -9,14 +9,14 @@ class AccountAdmin(admin.ModelAdmin):
     list_filter = ("type", "is_active")
     search_fields = ("name", "user__username")
 
-
+#
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ("id", "user", "name", "is_income", "created_at")
     list_filter = ("is_income",)
     search_fields = ("name", "user__username")
 
-
+#
 @admin.register(Transaction)
 class TransactionAdmin(admin.ModelAdmin):
     list_display = ("id", "user", "date", "type", "category", "account", "amount")
