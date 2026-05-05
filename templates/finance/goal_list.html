@@ -1,0 +1,40 @@
+{% extends "finance/base.html" %}
+
+{% block title %}Mục tiêu tiết kiệm - BeeRich{% endblock %}
+
+{% block content %}
+<div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+    <div class="flex items-center justify-between mb-6 flex-wrap gap-4">
+        <h3 class="text-xl font-bold text-gray-900">Mục tiêu tài chính của bạn</h3>
+        <a href="{% url 'finance:goal_create' %}" class="inline-flex items-center px-4 py-2 text-sm font-medium text-secondary bg-primary rounded-lg hover:bg-yellow-500 transition">
+            <i class="bi bi-plus-lg mr-2"></i> Tạo mục tiêu mới
+        </a>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {% for goal in goals %}
+            <div class="bg-gray-50 p-6 rounded-2xl border border-gray-100 hover:shadow-md transition">
+                <div class="flex items-center justify-between mb-4">
+                    <h5 class="text-lg font-bold text-gray-900">{{ goal.name }}</h5>
+                    <div class="flex gap-2">
+                        <a href="{% url 'finance:goal_update' goal.pk %}" class="text-blue-600 hover:underline text-sm">Sửa</a>
+                        <a href="{% url 'finance:goal_delete' goal.pk %}" class="text-red-600 hover:underline text-sm">Xóa</a>
+                    </div>
+                </div>
+                <div class="flex justify-between text-sm text-gray-500 mb-2">
+                    <span>Tiến độ:</span>
+                    <span class="font-semibold">{{ goal.current_amount|floatformat:0 }}/{{ goal.target_amount|floatformat:0 }}</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-4 mb-4">
+                    <div class="bg-primary h-4 rounded-full transition-all duration-500" style="width: {{ goal.progress_percentage }}%"></div>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-xs text-gray-400">Hạn: {{ goal.deadline|date:"d/m/Y" }}</span>
+                    <a href="{% url 'finance:goal_add_saving' goal.pk %}" class="px-4 py-1.5 text-xs font-medium text-secondary bg-yellow-200 rounded-full hover:bg-primary transition">+ Thêm tiết kiệm</a>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-span-full py-12 text-center text-gray-500">Bạn chưa có mục tiêu nào.</div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

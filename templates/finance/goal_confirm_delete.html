@@ -1,0 +1,15 @@
+{% extends "finance/base.html" %}
+
+{% block title %}Xóa Mục tiêu - BeeRich{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+    <h3 class="text-xl font-bold mb-6 text-gray-900">Xác nhận xóa mục tiêu</h3>
+    <p class="mb-8 text-gray-600">Bạn có chắc chắn muốn xóa mục tiêu <span class="font-bold text-red-600">{{ object.name }}</span>?</p>
+    <form method="post" class="flex items-center gap-4">
+        {% csrf_token %}
+        <button type="submit" class="px-6 py-2.5 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition">Xác nhận xóa</button>
+        <a href="{% url 'finance:goal_list' %}" class="px-6 py-2.5 text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 transition">Hủy</a>
+    </form>
+</div>
+{% endblock %}

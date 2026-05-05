@@ -1,0 +1,48 @@
+{% extends "finance/base.html" %}
+{% block title %}Giao dịch - BeeRich{% endblock %}
+{% block content %}
+<div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+    <div class="flex items-center justify-between mb-6 flex-wrap gap-4">
+        <h3 class="text-xl font-bold text-gray-900">Danh sách giao dịch</h3>
+        <div class="flex gap-4">
+            <form method="get" class="flex items-center gap-2">
+                <input type="text" name="q" value="{{ request.GET.q }}" placeholder="Tìm kiếm..." class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5">
+                <select name="category" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block p-2.5">
+                    <option value="">Tất cả danh mục</option>
+                    {% for cat in categories %}
+                        <option value="{{ cat.id }}" {% if request.GET.category == cat.id|stringformat:"i" %}selected{% endif %}>{{ cat.name }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="p-2.5 text-sm font-medium text-white bg-primary rounded-lg border border-primary"><i class="bi bi-search"></i></button>
+            </form>
+            <a href="{% url 'finance:transaction_create' %}" class="inline-flex items-center px-4 py-2 text-sm font-medium text-secondary bg-primary rounded-lg hover:bg-yellow-500 transition"><i class="bi bi-plus-lg mr-2"></i> Thêm giao dịch mới</a>
+        </div>
+    </div>
+    <div class="relative overflow-x-auto">
+        <table class="w-full text-sm text-left text-gray-500">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                <tr><th class="px-6 py-3">Ngày</th><th class="px-6 py-3">Mô tả</th><th class="px-6 py-3">Danh mục</th><th class="px-6 py-3">Số tiền</th><th class="px-6 py-3">Hành động</th></tr>
+            </thead>
+            <tbody>
+                {% for transaction in transactions %}
+                <tr class="bg-white border-b hover:bg-gray-50">
+                    <td class="px-6 py-4">{{ transaction.date|date:"d/m/Y" }}</td>
+                    <td class="px-6 py-4 font-medium text-gray-900">{{ transaction.note|default:"Không có mô tả" }}</td>
+                    <td class="px-6 py-4">{{ transaction.category.name }}</td>
+                    <td class="px-6 py-4 font-bold {% if transaction.type == 'income' %}text-green-600{% else %}text-red-600{% endif %}">
+                        {% if transaction.type == 'income' %}+{% else %}-{% endif %}{{ transaction.amount|floatformat:2 }}
+                    </td>
+                    <td class="px-6 py-4 space-x-2">
+                        <a href="{% url 'finance:transaction_update' transaction.pk %}" class="text-blue-600 hover:underline">Sửa</a>
+                        <a href="{% url 'finance:transaction_delete' transaction.pk %}" class="text-red-600 hover:underline">Xóa</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">Bạn chưa có giao dịch nào.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+

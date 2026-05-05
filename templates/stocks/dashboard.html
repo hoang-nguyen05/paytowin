@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% block title %}Chứng khoán{% endblock %}
+{% block content %}
+  <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-3">
+    <div>
+      <h1 class="h4 mb-0">Chứng khoán (dễ dùng)</h1>
+      <div class="text-muted">
+        Cách dùng: nhập mã (vd `AAPL`, `FPT.VN`, `ES=F`, `BTC-USD`) -> bấm Theo dõi -> bấm vào mã để xem biểu đồ và dự đoán.
+      </div>
+    </div>
+    <form class="d-flex gap-2" method="post" action="{% url 'stocks:add_watch' %}">
+      {% csrf_token %}
+      <input class="form-control form-control-sm" name="symbol" placeholder="Ví dụ: AAPL, FPT.VN, ES=F, BTC-USD" />
+      <input class="form-control form-control-sm" name="note" placeholder="Ghi chú (tuỳ chọn)" />
+      <button class="btn btn-sm btn-primary">Theo dõi</button>
+    </form>
+  </div>
+
+  <div class="card shadow-sm mb-3">
+    <div class="card-body">
+      <div class="small text-muted mb-2">Mã mẫu (bấm để thêm nhanh):</div>
+      <form method="post" action="{% url 'stocks:add_watch' %}" class="d-flex gap-2 flex-wrap">
+        {% csrf_token %}
+        <button class="btn btn-outline-secondary btn-sm" name="symbol" value="FPT.VN">FPT.VN</button>
+        <button class="btn btn-outline-secondary btn-sm" name="symbol" value="VNM.VN">VNM.VN</button>
+        <button class="btn btn-outline-secondary btn-sm" name="symbol" value="AAPL">AAPL</button>
+        <button class="btn btn-outline-secondary btn-sm" name="symbol" value="NVDA">NVDA</button>
+        <button class="btn btn-outline-secondary btn-sm" name="symbol" value="BTC-USD">BTC-USD</button>
+        <button class="btn btn-outline-secondary btn-sm" name="symbol" value="ES=F">ES=F</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="card shadow-sm">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <strong>Bảng giá cập nhật từ mạng</strong>
+      <small class="text-muted">Tự làm mới mỗi 10 giây</small>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-sm align-middle mb-0" id="boardTable">
+        <thead>
+          <tr>
+            <th>Mã CK</th>
+            <th>Tên</th>
+            <th class="text-end">Giá</th>
+            <th class="text-end">+/-</th>
+            <th class="text-end">% +/-</th>
+            <th class="text-end">Mở cửa</th>
+            <th class="text-end">Cao</th>
+            <th class="text-end">Thấp</th>
+            <th class="text-end">Khối lượng</th>
+            <th>Xu hướng</th>
+          </tr>
+        </thead>
+        <tbody id="boardBody">
+          <tr><td colspan="10" class="text-muted p-3">Đang tải dữ liệu thị trường...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card shadow-sm mt-3">
+    <div class="card-body">
+      <div class="small text-muted">
+        Nguồn dữ liệu: Yahoo Finance public endpoint. Dữ liệu có thể trễ vài phút tuỳ mã và thị trường.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const boardBody = document.getElementById("boardBody");
+
+    function fmtNum(v, digits = 2) {
+      if (v === null || v === undefined || Number.isNaN(v)) return "—";
+      return Number(v).toLocaleString(undefined, { maximumFractionDigits: digits, minimumFractionDigits: digits });
+    }
+    function fmtInt(v) {
+      if (v === null || v === undefined || Number.isNaN(v)) return "—";
+      return Number(v).toLocaleString();
+    }
+    function colorClass(v) {
+      if (v === null || v === undefined || Number.isNaN(v)) return "text-muted";
+      if (v > 0) return "text-success";
+      if (v < 0) return "text-danger";
+      return "text-warning-emphasis";
+    }
+
+    function sparkline(points, id) {
+      if (!points || points.length < 2) return "";
+      const w = 110, h = 26;
+      const min = Math.min(...points);
+      const max = Math.max(...points);
+      const span = (max - min) || 1;
+      const path = points.map((p, i) => {
+        const x = (i / (points.length - 1)) * w;
+        const y = h - ((p - min) / span) * h;
+        return `${i === 0 ? "M" : "L"}${x.toFixed(1)},${y.toFixed(1)}`;
+      }).join(" ");
+      const up = points[points.length - 1] >= points[0];
+      const stroke = up ? "#16a34a" : "#dc2626";
+      return `<svg id="${id}" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" aria-label="sparkline"><path d="${path}" fill="none" stroke="${stroke}" stroke-width="1.8" /></svg>`;
+    }
+
+    async function loadBoard() {
+      try {
+        const res = await fetch("{% url 'stocks:board_data' %}", { headers: { "Accept": "application/json" } });
+        const data = await res.json();
+        const rows = data.rows || [];
+        if (!rows.length) {
+          boardBody.innerHTML = `<tr><td colspan="10" class="text-muted p-3">Không lấy được dữ liệu mạng cho danh sách hiện tại.</td></tr>`;
+          return;
+        }
+        boardBody.innerHTML = rows.map((r, idx) => `
+          <tr>
+            <td><a href="/stocks/symbol/${encodeURIComponent(r.symbol)}/" class="fw-semibold">${r.symbol}</a></td>
+            <td class="small">${r.name || ""}</td>
+            <td class="text-end fw-semibold ${colorClass(r.change)}">${fmtNum(r.price)}</td>
+            <td class="text-end ${colorClass(r.change)}">${fmtNum(r.change)}</td>
+            <td class="text-end ${colorClass(r.change_percent)}">${fmtNum(r.change_percent)}%</td>
+            <td class="text-end">${fmtNum(r.open)}</td>
+            <td class="text-end text-success">${fmtNum(r.high)}</td>
+            <td class="text-end text-danger">${fmtNum(r.low)}</td>
+            <td class="text-end">${fmtInt(r.volume)}</td>
+            <td>${sparkline(r.spark, "sp-" + idx)}</td>
+          </tr>
+        `).join("");
+      } catch (e) {
+        boardBody.innerHTML = `<tr><td colspan="10" class="text-danger p-3">Lỗi tải dữ liệu thị trường. Vui lòng thử lại sau.</td></tr>`;
+      }
+    }
+
+    loadBoard();
+    setInterval(loadBoard, 10000);
+  </script>
+{% endblock %}
+

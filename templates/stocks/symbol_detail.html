@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}{{ symbol }}{% endblock %}
+{% block content %}
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <h1 class="h4 mb-0">{{ symbol }}</h1>
+      <div class="text-muted">Nguồn: Stooq CSV (có cache). Dự đoán dùng trung bình động 10 phiên.</div>
+    </div>
+    <a class="btn btn-sm btn-outline-secondary" href="{% url 'stocks:dashboard' %}">Quay lại</a>
+  </div>
+
+  {% if error %}
+    <div class="alert alert-warning">{{ error }}</div>
+  {% endif %}
+
+  <div class="row g-3">
+    <div class="col-lg-4">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <div class="text-muted">Giá đóng cửa gần nhất</div>
+          <div class="fs-3 fw-semibold">{% if last_close %}{{ last_close|floatformat:2 }}{% else %}—{% endif %}</div>
+          <div class="mt-2 d-flex gap-2 flex-wrap">
+            <span class="badge bg-secondary">1D: {% if change_1d %}{{ change_1d|floatformat:2 }}{% else %}—{% endif %}</span>
+            <span class="badge bg-secondary">7D: {% if change_7d %}{{ change_7d|floatformat:2 }}{% else %}—{% endif %}</span>
+            <span class="badge bg-info text-dark">Xu hướng: {{ trend }}</span>
+          </div>
+          <hr />
+          <div class="text-muted">Dự đoán (MA10)</div>
+          <div class="fs-4 fw-semibold">{% if forecast %}{{ forecast|floatformat:2 }}{% else %}—{% endif %}</div>
+          <div class="text-muted mt-2">MVP dự đoán: Moving Average 10 ngày (nhanh, dễ demo).</div>
+          <div class="small mt-2">
+            Biên độ 60 phiên: {% if min60 and max60 %}<strong>{{ min60|floatformat:2 }}</strong> - <strong>{{ max60|floatformat:2 }}</strong>{% else %}—{% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-8">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h2 class="h6">Giá đóng cửa 60 ngày gần nhất</h2>
+          <canvas id="lineChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {{ rows|json_script:"rowsData" }}
+  <script>
+    const rows = JSON.parse(document.getElementById("rowsData").textContent);
+    const labels = rows.map(r => r[0]);
+    const values = rows.map(r => r[1]);
+    new Chart(document.getElementById("lineChart"), {
+      type: "line",
+      data: { labels, datasets: [{ label: "Close", data: values, borderColor: "#0d6efd", tension: 0.2 }]},
+      options: { responsive: true }
+    });
+  </script>
+{% endblock %}
+

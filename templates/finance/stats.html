@@ -1,0 +1,50 @@
+{% extends "finance/base.html" %}
+
+{% block title %}Thống kê - BeeRich{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+        <h3 class="text-xl font-bold mb-6 text-gray-900">Chi tiêu theo danh mục</h3>
+        <canvas id="categoryChart"></canvas>
+    </div>
+</div>
+
+<div class="mt-8 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+    <h3 class="text-xl font-bold mb-6 text-gray-900">Chi tiết chi tiêu</h3>
+    <div class="relative overflow-x-auto">
+        <table class="w-full text-sm text-left text-gray-500">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3">Danh mục</th>
+                    <th class="px-6 py-3">Tổng cộng</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in expense_by_category %}
+                <tr class="bg-white border-b hover:bg-gray-50">
+                    <td class="px-6 py-4 font-medium text-gray-900">{{ item.category__name }}</td>
+                    <td class="px-6 py-4">{{ item.total|floatformat:2 }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+new Chart(categoryCtx, {
+    type: 'doughnut',
+    data: {
+        labels: [{% for item in expense_by_category %}'{{ item.category__name }}',{% endfor %}],
+        datasets: [{
+            data: [{% for item in expense_by_category %}{{ item.total }},{% endfor %}],
+            backgroundColor: ['#FFD700', '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF']
+        }]
+    },
+    options: {responsive: true, plugins: {legend: {position: 'bottom'}}}
+});
+</script>
+{% endblock %}

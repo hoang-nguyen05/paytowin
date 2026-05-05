@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+  <div class="row g-3">
+    <div class="col-md-4">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <div class="text-muted">Thu tháng này</div>
+          <div class="fs-3 fw-semibold">{{ income|floatformat:0 }}</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <div class="text-muted">Chi tháng này</div>
+          <div class="fs-3 fw-semibold">{{ expense|floatformat:0 }}</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <div class="text-muted">Chênh lệch</div>
+          <div class="fs-3 fw-semibold">{{ balance|floatformat:0 }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card shadow-sm mt-3">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center">
+        <h2 class="h5 mb-0">Giao dịch gần đây</h2>
+        <a class="btn btn-sm btn-primary" href="{% url 'finance:transaction_create' %}">+ Thêm nhanh</a>
+      </div>
+      <div class="table-responsive mt-3">
+        <table class="table table-sm align-middle">
+          <thead>
+            <tr>
+              <th>Ngày</th>
+              <th>Loại</th>
+              <th>Danh mục</th>
+              <th class="text-end">Số tiền</th>
+              <th>Ghi chú</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for t in recent %}
+              <tr>
+                <td>{{ t.date }}</td>
+                <td>
+                  {% if t.type == 'income' %}
+                    <span class="badge bg-success">Thu</span>
+                  {% else %}
+                    <span class="badge bg-danger">Chi</span>
+                  {% endif %}
+                </td>
+                <td>{{ t.category.name }}</td>
+                <td class="text-end">{{ t.amount|floatformat:0 }}</td>
+                <td class="text-truncate" style="max-width: 320px">{{ t.note }}</td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="5" class="text-muted">Chưa có giao dịch.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+

@@ -1,0 +1,103 @@
+/* Minimal but "bắt mắt" theme for MVP */
+
+:root {
+  --bee-gold: #ffd700;
+  --bee-gold-soft: #ffe98a;
+  --bee-dark: #111827;
+  --bee-text: #0f172a;
+  --app-card: #ffffff;
+}
+
+.app-bg {
+  min-height: 100vh;
+  background:
+    radial-gradient(1000px 500px at 10% 8%, rgba(255, 215, 0, 0.22), transparent 55%),
+    radial-gradient(1200px 700px at 100% 0%, rgba(255, 247, 200, 0.9), transparent 65%),
+    linear-gradient(180deg, #fffefa, #fff9dd 45%, #ffffff);
+  color: var(--bee-text);
+}
+
+.app-nav {
+  background: linear-gradient(90deg, #ffd700, #ffe79b);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(15, 23, 42, 0.12);
+}
+
+.navbar {
+  --bs-navbar-color: #111827;
+  --bs-navbar-hover-color: #111827;
+  --bs-navbar-brand-color: #111827;
+  --bs-navbar-brand-hover-color: #111827;
+}
+
+.navbar-brand,
+.nav-link {
+  color: #111827 !important;
+  font-weight: 600;
+}
+
+.card {
+  background: var(--app-card);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
+}
+
+.table {
+  --bs-table-bg: transparent;
+}
+
+pre {
+  background: #fffef8;
+  border: 1px solid rgba(15, 23, 42, 0.1);
+  padding: 12px;
+  border-radius: 10px;
+  color: #1f2937;
+}
+
+.btn-outline-light {
+  border-color: rgba(15, 23, 42, 0.25);
+  color: #0f172a;
+  background: rgba(255, 255, 255, 0.55);
+}
+
+.btn-outline-light:hover {
+  background: var(--bee-gold);
+  color: var(--bee-dark);
+  border-color: var(--bee-gold);
+}
+
+.btn-light {
+  background: var(--bee-gold);
+  color: var(--bee-dark);
+  border-color: var(--bee-gold);
+}
+
+.btn-primary {
+  background: var(--bee-gold);
+  border-color: var(--bee-gold);
+  color: var(--bee-dark);
+}
+
+.btn-primary:hover {
+  background: var(--bee-gold-soft);
+  border-color: var(--bee-gold-soft);
+  color: #111827;
+}
+
+.form-control,
+.form-select {
+  background: #ffffff;
+  border-color: rgba(15, 23, 42, 0.18);
+  color: #111827;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: #facc15;
+  box-shadow: 0 0 0 0.2rem rgba(250, 204, 21, 0.25);
+}
+
+.text-muted {
+  color: #475569 !important;
+}
+

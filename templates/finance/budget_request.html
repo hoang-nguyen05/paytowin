@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Yêu cầu điều chỉnh{% endblock %}
+{% block content %}
+  <div class="row justify-content-center">
+    <div class="col-lg-6">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h1 class="h5 mb-2">Yêu cầu điều chỉnh ngân sách</h1>
+          <div class="text-muted mb-3">Danh mục: {{ budget.category.name }} | Tháng: {{ budget.month|date:"m/Y" }}</div>
+          <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <div class="d-flex gap-2">
+              <button class="btn btn-primary">Gửi</button>
+              <a class="btn btn-outline-secondary" href="{% url 'finance:budgets' %}">Huỷ</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+

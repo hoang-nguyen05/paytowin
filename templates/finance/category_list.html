@@ -1,0 +1,35 @@
+{% extends "finance/base.html" %}
+{% block title %}Danh mục - BeeRich{% endblock %}
+{% block content %}
+<div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+    <div class="flex items-center justify-between mb-6">
+        <h3 class="text-xl font-bold text-gray-900">Danh mục chi tiêu/thu nhập</h3>
+        <a href="{% url 'finance:category_create' %}" class="inline-flex items-center px-4 py-2 text-sm font-medium text-secondary bg-primary rounded-lg hover:bg-yellow-500 transition">
+            <i class="bi bi-plus-lg mr-2"></i> Thêm danh mục mới
+        </a>
+    </div>
+    <div class="relative overflow-x-auto">
+        <table class="w-full text-sm text-left text-gray-500">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                <tr><th class="px-6 py-3">Biểu tượng</th><th class="px-6 py-3">Tên danh mục</th><th class="px-6 py-3">Loại</th><th class="px-6 py-3">Hành động</th></tr>
+            </thead>
+            <tbody>
+                {% for category in categories %}
+                <tr class="bg-white border-b hover:bg-gray-50">
+                    <td class="px-6 py-4"><div class="w-10 h-10 rounded-full flex items-center justify-center bg-gray-100"><i class="bi {{ category.icon }} text-gray-600"></i></div></td>
+                    <td class="px-6 py-4 font-medium text-gray-900">{{ category.name }}</td>
+                    <td class="px-6 py-4"><span class="px-2.5 py-0.5 rounded-full text-xs font-medium {% if category.is_income %}bg-green-100 text-green-800{% else %}bg-red-100 text-red-800{% endif %}">{% if category.is_income %}Income{% else %}Expense{% endif %}</span></td>
+                    <td class="px-6 py-4 space-x-2">
+                        <a href="{% url 'finance:category_update' category.pk %}" class="text-blue-600 hover:underline">Sửa</a>
+                        <a href="{% url 'finance:category_delete' category.pk %}" class="text-red-600 hover:underline">Xóa</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="4" class="px-6 py-4 text-center text-gray-500">Bạn chưa tạo danh mục nào.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+

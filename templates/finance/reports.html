@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Báo cáo{% endblock %}
+{% block content %}
+  <h1 class="h4">Báo cáo</h1>
+
+  <div class="row g-3">
+    <div class="col-lg-5">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h2 class="h6">Tỷ lệ chi tiêu theo danh mục</h2>
+          <canvas id="pieChart"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-7">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h2 class="h6">Thu – Chi 6 tháng gần nhất</h2>
+          <canvas id="barChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {{ pie|json_script:"pieData" }}
+  {{ months|json_script:"monthsData" }}
+  {{ bar_income|json_script:"barIncome" }}
+  {{ bar_expense|json_script:"barExpense" }}
+
+  <script>
+    const pie = JSON.parse(document.getElementById("pieData").textContent);
+    const labels = pie.map(x => x["category__name"]);
+    const values = pie.map(x => x["total"]);
+    new Chart(document.getElementById("pieChart"), {
+      type: "pie",
+      data: { labels, datasets: [{ data: values }] },
+    });
+
+    const months = JSON.parse(document.getElementById("monthsData").textContent);
+    const income = JSON.parse(document.getElementById("barIncome").textContent);
+    const expense = JSON.parse(document.getElementById("barExpense").textContent);
+    new Chart(document.getElementById("barChart"), {
+      type: "bar",
+      data: {
+        labels: months,
+        datasets: [
+          { label: "Thu", data: income, backgroundColor: "#198754" },
+          { label: "Chi", data: expense, backgroundColor: "#dc3545" },
+        ]
+      },
+      options: { responsive: true }
+    });
+  </script>
+{% endblock %}
+

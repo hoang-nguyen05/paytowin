@@ -1,0 +1,68 @@
+{% extends "finance/base.html" %}
+
+{% block title %}Dashboard - BeeRich{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+        <h5 class="text-sm font-medium text-gray-500">Tổng thu nhập</h5>
+        <p class="text-2xl font-bold text-gray-900">{{ income|floatformat:2 }}</p>
+    </div>
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+        <h5 class="text-sm font-medium text-gray-500">Tổng chi tiêu</h5>
+        <p class="text-2xl font-bold text-gray-900">{{ expense|floatformat:2 }}</p>
+    </div>
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+        <h5 class="text-sm font-medium text-gray-500">Số dư hiện tại</h5>
+        <p class="text-2xl font-bold {% if balance < 0 %}text-red-600{% else %}text-green-600{% endif %}">{{ balance|floatformat:2 }}</p>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-bold">Giao dịch gần đây</h3>
+            <a href="{% url 'finance:transaction_list' %}" class="text-sm text-primary hover:underline">Xem tất cả</a>
+        </div>
+        <div class="space-y-4">
+            {% for transaction in recent_transactions %}
+                <div class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition">
+                    <div>
+                        <p class="font-semibold text-gray-900">{{ transaction.note|default:transaction.category.name }}</p>
+                        <p class="text-xs text-gray-500">{{ transaction.date|date:"d/m/Y" }}</p>
+                    </div>
+                    <p class="font-bold {% if transaction.type == 'income' %}text-green-600{% else %}text-red-600{% endif %}">
+                        {% if transaction.type == 'income' %}+{% else %}-{% endif %}{{ transaction.amount|floatformat:2 }}
+                    </p>
+                </div>
+            {% empty %}
+                <p class="text-center text-gray-500 py-4">Chưa có giao dịch nào.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="space-y-6">
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-bold">Mục tiêu tiết kiệm</h3>
+                <a href="{% url 'finance:goal_list' %}" class="text-sm text-primary hover:underline">Xem tất cả</a>
+            </div>
+            <div class="space-y-4">
+                {% for goal in goals %}
+                    <div>
+                        <div class="flex justify-between text-sm mb-1">
+                            <span class="font-medium">{{ goal.name }}</span>
+                            <span class="text-gray-500">{{ goal.current_amount|floatformat:0 }}/{{ goal.target_amount|floatformat:0 }}</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-primary h-2 rounded-full" style="width: {{ goal.progress_percentage }}%"></div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <p class="text-center text-gray-500 py-4">Chưa có mục tiêu nào.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

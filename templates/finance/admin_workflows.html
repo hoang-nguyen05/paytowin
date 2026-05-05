@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block title %}Admin workflows{% endblock %}
+{% block content %}
+  <h1 class="h4">Workflow duyệt (Admin)</h1>
+
+  <div class="row g-3">
+    <div class="col-lg-6">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h2 class="h6">Duyệt hoá đơn</h2>
+          <div class="table-responsive">
+            <table class="table table-sm align-middle">
+              <thead>
+                <tr>
+                  <th>User</th>
+                  <th>Giao dịch</th>
+                  <th>Trạng thái</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for rr in receipt_reviews %}
+                  <tr>
+                    <td>{{ rr.transaction.user.username }}</td>
+                    <td>
+                      {{ rr.transaction.date }} — {{ rr.transaction.amount|floatformat:0 }}
+                      {% if rr.transaction.receipt_image %}<a href="{{ rr.transaction.receipt_image.url }}" target="_blank">ảnh</a>{% endif %}
+                    </td>
+                    <td><span class="badge bg-secondary">{{ rr.get_status_display }}</span></td>
+                    <td class="text-end">
+                      <form method="post" action="{% url 'finance:admin_review_receipt' rr.id 'approve' %}" class="d-inline">
+                        {% csrf_token %}
+                        <button class="btn btn-sm btn-success">Duyệt</button>
+                      </form>
+                      <form method="post" action="{% url 'finance:admin_review_receipt' rr.id 'reject' %}" class="d-inline">
+                        {% csrf_token %}
+                        <button class="btn btn-sm btn-outline-danger">Từ chối</button>
+                      </form>
+                    </td>
+                  </tr>
+                {% empty %}
+                  <tr><td colspan="4" class="text-muted">Không có.</td></tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h2 class="h6">Duyệt yêu cầu điều chỉnh ngân sách</h2>
+          <div class="table-responsive">
+            <table class="table table-sm align-middle">
+              <thead>
+                <tr>
+                  <th>User</th>
+                  <th>Ngân sách</th>
+                  <th>Mức mới</th>
+                  <th>Trạng thái</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for r in budget_reqs %}
+                  <tr>
+                    <td>{{ r.user.username }}</td>
+                    <td>{{ r.budget.category.name }} ({{ r.budget.month|date:"m/Y" }})</td>
+                    <td>{{ r.new_limit_amount|floatformat:0 }}</td>
+                    <td><span class="badge bg-secondary">{{ r.get_status_display }}</span></td>
+                    <td class="text-end">
+                      <form method="post" action="{% url 'finance:admin_review_budget_request' r.id 'approve' %}" class="d-inline">
+                        {% csrf_token %}
+                        <button class="btn btn-sm btn-success">Duyệt</button>
+                      </form>
+                      <form method="post" action="{% url 'finance:admin_review_budget_request' r.id 'reject' %}" class="d-inline">
+                        {% csrf_token %}
+                        <button class="btn btn-sm btn-outline-danger">Từ chối</button>
+                      </form>
+                    </td>
+                  </tr>
+                {% empty %}
+                  <tr><td colspan="5" class="text-muted">Không có.</td></tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+

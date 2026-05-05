@@ -1,0 +1,16 @@
+{% extends "finance/base.html" %}
+{% block title %}{% if object %}Sửa{% else %}Thiết lập{% endif %} Ngân sách - BeeRich{% endblock %}
+{% block content %}
+<div class="max-w-2xl mx-auto bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+    <h3 class="text-xl font-bold mb-6 text-gray-900">{% if object %}Sửa{% else %}Thiết lập{% endif %} Ngân sách</h3>
+    <form method="post" class="space-y-4">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div class="flex items-center gap-4">
+            <button type="submit" class="px-5 py-2.5 text-sm font-medium text-secondary bg-primary rounded-lg hover:bg-yellow-500 transition">Lưu ngân sách</button>
+            <a href="{% url 'finance:budget_list' %}" class="px-5 py-2.5 text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 transition">Hủy</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
+

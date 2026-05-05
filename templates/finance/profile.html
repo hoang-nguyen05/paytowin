@@ -1,0 +1,31 @@
+{% extends "finance/base.html" %}
+
+{% block title %}Hồ sơ của bạn - BeeRich{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+        <div class="flex items-center gap-6 mb-8 border-b border-gray-100 pb-8">
+            <div>
+                {% if object.avatar %}
+                    <img class="w-24 h-24 rounded-full object-cover border-4 border-primary" src="{{ object.avatar.url }}" alt="Avatar">
+                {% else %}
+                    <div class="w-24 h-24 rounded-full bg-primary flex items-center justify-center text-secondary text-4xl font-bold border-4 border-yellow-200">{{ user.username|first|upper }}</div>
+                {% endif %}
+            </div>
+            <div>
+                <h3 class="text-2xl font-bold text-gray-900">{{ user.username }}</h3>
+                <p class="text-gray-500">{{ user.email }}</p>
+            </div>
+        </div>
+        <form method="post" enctype="multipart/form-data" class="space-y-4">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <div class="flex items-center gap-4 border-t border-gray-100 pt-8 mt-8">
+                <button type="submit" class="px-6 py-2.5 text-sm font-medium text-secondary bg-primary rounded-lg hover:bg-yellow-500 transition">Cập nhật hồ sơ</button>
+                <a href="{% url 'finance:dashboard' %}" class="px-6 py-2.5 text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 transition">Hủy</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

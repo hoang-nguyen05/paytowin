@@ -1,0 +1,32 @@
+{% extends "finance/base.html" %}
+{% block title %}Ngân sách - BeeRich{% endblock %}
+{% block content %}
+<div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+    <div class="flex items-center justify-between mb-6 flex-wrap gap-4">
+        <h3 class="text-xl font-bold text-gray-900">Ngân sách tháng này</h3>
+        <a href="{% url 'finance:budget_create' %}" class="inline-flex items-center px-4 py-2 text-sm font-medium text-secondary bg-primary rounded-lg hover:bg-yellow-500 transition">
+            <i class="bi bi-plus-lg mr-2"></i> Thiết lập ngân sách mới
+        </a>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for budget in budgets %}
+            <div class="bg-gray-50 p-6 rounded-2xl border border-gray-100 hover:shadow-md transition">
+                <div class="flex items-center justify-between mb-4">
+                    <h5 class="text-lg font-bold text-gray-900">{{ budget.category.name }}</h5>
+                    <a href="{% url 'finance:budget_update' budget.pk %}" class="text-blue-600 hover:underline text-sm">Sửa</a>
+                </div>
+                <div class="flex justify-between text-sm text-gray-500 mb-2">
+                    <span>Đã dùng:</span>
+                    <span class="font-semibold">{{ budget.spent_amount|floatformat:0 }}/{{ budget.limit_amount|floatformat:0 }}</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-3">
+                    <div class="h-3 rounded-full {% if budget.is_over_budget %}bg-red-600{% else %}bg-primary{% endif %}" style="width: {{ budget.progress_percentage }}%"></div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-span-full py-12 text-center text-gray-500">Bạn chưa thiết lập ngân sách nào cho tháng này.</div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+

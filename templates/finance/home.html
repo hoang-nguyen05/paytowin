@@ -1,0 +1,30 @@
+{% extends "finance/base.html" %}
+
+{% block title %}Chào mừng đến với BeeRich{% endblock %}
+
+{% block content %}
+<div class="relative flex items-center justify-center min-h-[80vh] bg-white overflow-hidden rounded-3xl shadow-xl">
+    <div class="z-10 text-center px-6 max-w-4xl">
+        <h1 class="mb-4 text-4xl font-extrabold tracking-tight leading-none text-gray-900 md:text-5xl lg:text-6xl">
+            Quản lý tài chính cá nhân <span class="text-primary">thông minh</span> cùng BeeRich
+        </h1>
+        <p class="mb-8 text-lg font-normal text-gray-500 lg:text-xl">
+            Theo dõi chi tiêu, lập ngân sách, và đạt được mục tiêu tài chính của bạn một cách dễ dàng.
+        </p>
+        <div class="flex flex-col space-y-4 sm:flex-row sm:justify-center sm:space-y-0 sm:space-x-4">
+            {% if not user.is_authenticated %}
+                <a href="{% url 'register' %}" class="inline-flex justify-center items-center py-3 px-5 text-base font-medium text-center text-secondary rounded-lg bg-primary hover:bg-yellow-500">
+                    Bắt đầu ngay
+                </a>
+                <a href="{% url 'login' %}" class="inline-flex justify-center items-center py-3 px-5 text-base font-medium text-center text-gray-900 rounded-lg border border-gray-300 hover:bg-gray-100">
+                    Đăng nhập
+                </a>
+            {% else %}
+                <a href="{% url 'finance:dashboard' %}" class="inline-flex justify-center items-center py-3 px-5 text-base font-medium text-center text-secondary rounded-lg bg-primary hover:bg-yellow-500">
+                    Đến Dashboard
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

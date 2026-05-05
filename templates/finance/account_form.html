@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}{% if mode == "create" %}Tạo tài khoản{% else %}Sửa tài khoản{% endif %}{% endblock %}
+{% block content %}
+  <div class="row justify-content-center">
+    <div class="col-lg-6">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h1 class="h5 mb-3">{% if mode == "create" %}Tạo tài khoản tiền{% else %}Sửa tài khoản tiền{% endif %}</h1>
+          <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <div class="d-flex gap-2">
+              <button class="btn btn-primary">Lưu</button>
+              <a class="btn btn-outline-secondary" href="{% url 'finance:accounts' %}">Huỷ</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
